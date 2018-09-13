@@ -75,7 +75,7 @@ def requestBaiduApi(keyWords, smallRect, baiduAk, index, fileKey):
                 for r in res['results']:
                     file.writelines(str(r).strip() + '\n')
                     # 增加标准输出
-                    print(str(r).strip())
+                    print(str(r).encode('utf-8').strip())
             pageNum += 1
             time.sleep(1)
         except:

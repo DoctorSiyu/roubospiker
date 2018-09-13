@@ -30,7 +30,7 @@ def format(line):
         else:
             result["rate"] = "0.0"
 
-        print(result, flush=True)
+        print(str(result).encode('utf-8'), flush=True)
     except Exception as e:
         pass
 
