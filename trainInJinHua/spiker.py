@@ -5,7 +5,6 @@ import time
 from tool.tool import tool
 import io
 import sys
-
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 """
     查询关键字：
@@ -69,7 +68,6 @@ def requestBaiduApi(keyWords, smallRect, baiduAk, index, fileKey):
                   "&page_num=" + str(pageNum)
             resp = requests.get(URL)
             res = json.loads(resp.text)
-            # print(resp.text.strip())
             if len(res['results']) == 0:
                 logfile.writelines(
                     time.strftime("%Y%m%d%H%M%S") + " stop " + str(index) + " " + smallRect + " " + str(pageNum) + '\n')
@@ -78,12 +76,10 @@ def requestBaiduApi(keyWords, smallRect, baiduAk, index, fileKey):
                 for r in res['results']:
                     file.writelines(str(r).strip() + '\n')
                     # 增加标准输出
-                    print('want to print')
-                    print(str(r).strip())
+                    print(str(r).strip(), flush=True)
             pageNum += 1
             time.sleep(1)
         except:
-            print("except")
             logfile.writelines(
                 time.strftime("%Y%m%d%H%M%S") + " except " + str(index) + " " + smallRect + " " + str(pageNum) + '\n')
             break

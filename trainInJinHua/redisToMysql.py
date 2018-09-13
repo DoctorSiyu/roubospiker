@@ -26,7 +26,7 @@ def connectMysql():
     :return: engine connect
     """
     config = tool.getMysqlConfig()
-    engine = create_engine(str(r"mysql+pymysql://%s:%s@%s/%s") %
+    engine = create_engine(str(r"mysql+pymysql://%s:%s@%s/%s?charset=utf8") %
                            (config['User'],
                             config['Pass'],
                             config['Host'],
@@ -45,13 +45,13 @@ def redisToMysql(re, en):
     res = []
     index = 0
     for item in re.sscan_iter(tool.getFileKey() + '_' + today):
-        tmp = eval(item)
+        tmp = eval(item.encode('utf-8').decode('utf-8'))
         tmp['time'] = today
         res.append(tmp)
         index += 1
         if index >= 100:
             df = pd.DataFrame(res)
-            df.to_sql('respage01', con=en, if_exists='append', index=False)
+            df.to_sql('respage01', con=en, if_exists='append', index=False,)
             index = 0
             res = []
     if index != 0:

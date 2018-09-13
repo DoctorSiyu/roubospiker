@@ -2,9 +2,8 @@
 import fileinput
 import io
 import sys
-
+import chardet
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
-
 
 def format(line):
     """
@@ -12,7 +11,7 @@ def format(line):
     :return:
     """
     result = {}
-    tmp = eval(line)
+    tmp = eval(line.decode('utf-8'))
     try:
         result = {
             "name": str(tmp["name"]),
@@ -33,18 +32,20 @@ def format(line):
         else:
             result["rate"] = "0.0"
 
-        print(str(result).encode('utf-8'), flush=True)
+        print(str(result).strip(), flush=True)
 
     except Exception as e:
+        print(e)
         pass
 
 
 def main():
     try:
-        for line in fileinput.input():
+        for line in fileinput.input(mode='rb'):
             format(line)
         sys.stderr.close()
     except Exception as e:
+        print(e)
         pass
 
 

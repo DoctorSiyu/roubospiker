@@ -3,6 +3,9 @@ import fileinput
 import redis
 import time
 from tool.tool import tool
+import io
+import sys
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 
 
 def connectRedis():
@@ -19,8 +22,8 @@ def main():
     setName = tool.getFileKey() + "_" + today
     try:
         re = connectRedis()
-        for line in fileinput.input():
-            re.sadd(setName, str(line).strip())
+        for line in fileinput.input(mode='rb'):
+            re.sadd(setName, line.decode('utf-8').strip())
         exit(0)
     except Exception as e:
         print(e)
