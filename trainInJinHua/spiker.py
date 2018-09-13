@@ -3,7 +3,10 @@ import requests
 import json
 import time
 from tool.tool import tool
+import io
 import sys
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 """
     查询关键字：
 """
@@ -75,7 +78,8 @@ def requestBaiduApi(keyWords, smallRect, baiduAk, index, fileKey):
                 for r in res['results']:
                     file.writelines(str(r).strip() + '\n')
                     # 增加标准输出
-                    print(str(r).encode('utf-8').strip())
+                    print('want to print')
+                    print(str(r).strip())
             pageNum += 1
             time.sleep(1)
         except:
