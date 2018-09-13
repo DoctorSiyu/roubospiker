@@ -6,7 +6,7 @@ class Tool(object):
     config = {}
 
     def __init__(self):
-        with open("./config.json", "r") as f:
+        with open("./config.json", "r", encoding='utf-8') as f:
             self.config = json.load(f)
 
     def getBaiduApiAk(self):
