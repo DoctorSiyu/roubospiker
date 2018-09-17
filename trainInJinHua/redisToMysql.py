@@ -61,7 +61,7 @@ def redisToMysql(re, en):
     # 添加主键
     # print("xxxxxxxx")
     # with en.connect() as con:
-    #     con.execute('ALTER TABLE ' + tableName + ' ADD PRIMARY KEY ("ID");')
+    #     con.execute("alter table respage01 add COLUMN id INT NOT NULL AUTO_INCREMENT  primary key first")
 
 
 def main():
