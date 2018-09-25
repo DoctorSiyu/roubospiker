@@ -45,6 +45,7 @@ def redisToMysql(re, en, redis_key, mysql_table, is_append):
     today = time.strftime("%Y_%m_%d")
     res = []
     index = 0
+    need_append = False
     for item in re.sscan_iter(redis_key):
         tmp = eval(item.encode('utf-8').decode('utf-8'))
         tmp['time'] = today
@@ -56,11 +57,12 @@ def redisToMysql(re, en, redis_key, mysql_table, is_append):
                 df.to_sql(mysql_table, con=en, if_exists='append', index=False)
             else:
                 df.to_sql(mysql_table, con=en, if_exists='replace', index=False)
+            need_append = True
             index = 0
             res = []
     if index != 0:
         df = pd.DataFrame(res)
-        if is_append:
+        if need_append:
             df.to_sql(name=mysql_table, con=en, if_exists='append', index=False)
         else:
             df.to_sql(name=mysql_table, con=en, if_exists='replace', index=False)
