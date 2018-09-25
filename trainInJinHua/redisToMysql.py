@@ -86,7 +86,6 @@ def getKeyListExceptToday(re):
     :return:
     """
     today = time.strftime("%Y_%m_%d")
-    today = '2018_09_09'
     keyList = re.keys(tool.getFileKey() + '_*')
     try:
         keyList.remove(tool.getFileKey() + '_' + today)
@@ -118,7 +117,6 @@ def getNewDiffData(re):
     :return:
     """
     today = time.strftime("%Y_%m_%d")
-    today = '2018_09_09'
     if 'train_' + today in getKeyList(re):
         re.delete(tool.getFileKey() + 'new')
         re.sdiffstore(tool.getFileKey() + 'new', tool.getFileKey() + '_' + today, tool.getFileKey() + 'uniontmp')
@@ -133,7 +131,6 @@ def getGoneDiffData(re):
     :return:
     """
     today = time.strftime("%Y_%m_%d")
-    today = '2018_09_09'
     if tool.getFileKey() + '_' + today in getKeyList(re):
         re.delete(tool.getFileKey() + 'gone')
         re.sdiffstore(tool.getFileKey() + 'gone', tool.getFileKey() + 'union', tool.getFileKey() + '_' + today)
