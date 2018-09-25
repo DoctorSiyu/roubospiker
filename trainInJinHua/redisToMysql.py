@@ -53,7 +53,7 @@ def redisToMysql(re, en, redis_key, mysql_table, is_append):
         index += 1
         if index >= 100:
             df = pd.DataFrame(res)
-            if is_append:
+            if is_append or need_append:
                 df.to_sql(mysql_table, con=en, if_exists='append', index=False)
             else:
                 df.to_sql(mysql_table, con=en, if_exists='replace', index=False)
