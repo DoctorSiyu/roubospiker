@@ -48,6 +48,8 @@ def redisToMysql(re, en, redis_key, mysql_table, is_append):
     need_append = False
     for item in re.sscan_iter(redis_key):
         tmp = eval(item.encode('utf-8').decode('utf-8'))
+        if isinstance(tmp, str):
+            continue
         tmp['time'] = today
         res.append(tmp)
         index += 1
