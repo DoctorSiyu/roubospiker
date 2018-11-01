@@ -8,3 +8,9 @@ source ../django/env3/bin/activate
 cd trainInJinHua
 
 python spiker.py | python format.py | python writeToRedis.py && python redisToMysql.py
+
+###################################
+# producthunt
+
+cd ../productHunt
+python spiker.py
