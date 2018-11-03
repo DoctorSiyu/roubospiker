@@ -5,6 +5,7 @@ import time
 from tool.tool import tool
 import io
 import sys
+import multiprocessing
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 
@@ -14,8 +15,8 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 FileKey = tool.getFileKey()
 """
     关注区域的左下角和右上角百度地图坐标
-"""
-BigRect = {
+    全市：
+    BigRect = {
     'left': {
         'x': 119.58962425017401,
         'y': 29.02371358317696
@@ -25,13 +26,35 @@ BigRect = {
         'y': 29.149153586357146
     }
 }
+"""
+BigRect1 = {
+    'left': {
+        'x': 119.634998,
+        'y': 29.046372
+    },
+    'right': {
+        'x': 119.6727628,
+        'y': 29.077628
+    }
+}
+
+BigRect2 = {
+    'left': {
+        'x': 119.628268,
+        'y': 29.072232
+    },
+    'right': {
+        'x': 119.67208,
+        'y': 29.098397
+    }
+}
 
 """
     定义细分窗口的数量，横向X * 纵向Y
 """
 WindowSize = {
-    'xNum': 20.0,
-    'yNum': 20.0
+    'xNum': 30.0,
+    'yNum': 30.0
 }
 
 
@@ -52,15 +75,12 @@ def getSmallRect(bigRect, windowSize, windowIndex):
     return str(middle_x), str(middle_y)
 
 
-def requestMBikeApi(lat, lng, index, fileKey):
-    today = time.strftime("%Y_%m_%d_%H")
-    logfile = open("./log/" + fileKey + "-" + today + ".log", 'a+', encoding='utf-8')
-    file = open("./result/" + fileKey + "-" + today + ".txt", 'a+', encoding='utf-8')
+def requestMBikeApi(lat, lng, index, file, logfile, userId):
     try:
         URL = "https://mwx.mobike.com/nearby/nearbyBikeInfo?biketype=0" + \
               "&latitude=" + lat + \
               "&longitude=" + lng + \
-              "&userid=56971952127272093696470926" + \
+              "&userid=" + userId + \
               "&citycode=0579"
         resp = requests.get(URL)
         res = json.loads(resp.text)
@@ -72,21 +92,41 @@ def requestMBikeApi(lat, lng, index, fileKey):
                 file.writelines(str(r).strip() + '\n')
                 # 增加标准输出
                 print(str(r).strip(), flush=True)
-        time.sleep(10)
+        time.sleep(1)
     except:
         logfile.writelines(
             time.strftime("%Y%m%d%H%M%S") + " except " + str(index) + " " + str(lat) + " " + str(lng) + '\n')
-        time.sleep(10)
+        time.sleep(1)
+
+
+def worker(bigrect, userId, FileKey):
+    today = time.strftime("%Y_%m_%d_%H")
+    for count in range(0, 10):
+        logfile = open("./log/" + FileKey + "-" + str(count) + '_' + today + ".log", 'a+', encoding='utf-8')
+        file = open("./result/" + FileKey + "-" + str(count) + '_' + today + ".txt", 'a+', encoding='utf-8')
+        for index in range(int(WindowSize['xNum'] * WindowSize['yNum'])):
+            print('---------------')
+            print(index)
+            print('---------------')
+            lng, lat = getSmallRect(bigrect, WindowSize, index)
+            requestMBikeApi(lat=lat, lng=lng, index=index, file=file, logfile=logfile, userId=userId)
+        time.sleep(1200)
+    sys.stderr.close()
 
 
 def main():
-    for index in range(int(WindowSize['xNum'] * WindowSize['yNum'])):
-        print('---------------')
-        print(index)
-        print('---------------')
-        lng, lat = getSmallRect(BigRect, WindowSize, index)
-        requestMBikeApi(lat=lat, lng=lng, index=index, fileKey=FileKey)
-    sys.stderr.close()
+    # for index in range(int(WindowSize['xNum'] * WindowSize['yNum'])):
+    #     print('---------------')
+    #     print(index)
+    #     print('---------------')
+    #     lng, lat = getSmallRect(BigRect, WindowSize, index)
+    #     requestMBikeApi(lat=lat, lng=lng, index=index, fileKey=FileKey)
+    # sys.stderr.close()
+    userIds = tool.getMBikeUserID()
+    p1 = multiprocessing.Process(target=worker, name='p1', args=(BigRect1, userIds[0], 'shareBike01'))
+    p2 = multiprocessing.Process(target=worker, name='p2', args=(BigRect2, userIds[1], 'shareBike02'))
+    p1.start()
+    p2.start()
 
 
 if __name__ == '__main__':

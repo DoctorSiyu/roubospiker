@@ -30,5 +30,8 @@ class Tool(object):
     def getMysqlConfig(self):
         return self.config["MysqlConf"]
 
+    def getMBikeUserID(self):
+        return self.config['MBikeUserID']
+
 
 tool = Tool()
