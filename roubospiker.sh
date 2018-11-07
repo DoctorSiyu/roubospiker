@@ -18,7 +18,11 @@ python spiker.py
 ###################################
 # respage 02
 cd ../sharebikeInJinHua
-python spiker.py | python format.py | python writeToRedis.py
-if [ "$?" == "0" ]; then
-    python redisToMysql.py
-fi
+for i in {1..10}
+do
+    python spiker.py | python format.py | python writeToRedis.py
+    if [ "$?" == "0" ]; then
+        python redisToMysql.py
+    fi
+done
+
