@@ -14,3 +14,11 @@ python spiker.py | python format.py | python writeToRedis.py && python redisToMy
 
 cd ../productHunt
 python spiker.py
+
+###################################
+# respage 02
+cd ../sharebikeInJinHua
+python spiker.py | python format.py | python writeToRedis.py
+if [ "$?" == "0" ]; then
+    python redisToMysql.py
+fi

@@ -2,3 +2,4 @@ config.json
 result/
 .idea/
 log/
+*.pyc

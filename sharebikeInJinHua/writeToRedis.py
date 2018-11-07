@@ -18,7 +18,7 @@ def connectRedis():
 
 
 def main():
-    today = time.strftime("%Y_%m_%d_%H")
+    today = time.strftime("%Y_%m_%d")
     setName = tool.getFileKey() + "_" + today
     try:
         re = connectRedis()

@@ -17,6 +17,8 @@ def format(line):
             "bikeid": str(tmp["distId"]),
             "lat": tmp["distY"],
             "lng": tmp["distX"],
+            "time": tmp['time'],
+            "day": tmp['day'],
             "type" : 'mb'
         }
 

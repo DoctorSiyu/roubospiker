@@ -6,6 +6,7 @@ from tool.tool import tool
 import io
 import sys
 import multiprocessing
+import asyncio
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 
@@ -75,7 +76,7 @@ def getSmallRect(bigRect, windowSize, windowIndex):
     return str(middle_x), str(middle_y)
 
 
-def requestMBikeApi(lat, lng, index, file, logfile, userId):
+def requestMBikeApi(lat, lng, index, file, logfile, userId, day, timp):
     try:
         URL = "https://mwx.mobike.com/nearby/nearbyBikeInfo?biketype=0" + \
               "&latitude=" + lat + \
@@ -89,8 +90,11 @@ def requestMBikeApi(lat, lng, index, file, logfile, userId):
                 time.strftime("%Y%m%d%H%M%S") + " stop " + str(index) + " " + str(lat) + " " + str(lng) + '\n')
         else:
             for r in res['object']:
+                r['day'] = day
+                r['time'] = timp
                 file.writelines(str(r).strip() + '\n')
                 # 增加标准输出
+                # sys.stdout.write(str(r).strip())
                 print(str(r).strip(), flush=True)
         time.sleep(1)
     except:
@@ -100,19 +104,26 @@ def requestMBikeApi(lat, lng, index, file, logfile, userId):
 
 
 def worker(bigrect, userId, FileKey):
+    # for count in range(0, 10):
+    count = 0
     today = time.strftime("%Y_%m_%d_%H")
-    for count in range(0, 10):
-        logfile = open("./log/" + FileKey + "-" + str(count) + '_' + today + ".log", 'a+', encoding='utf-8')
-        file = open("./result/" + FileKey + "-" + str(count) + '_' + today + ".txt", 'a+', encoding='utf-8')
-        for index in range(int(WindowSize['xNum'] * WindowSize['yNum'])):
-            print('---------------')
-            print(index)
-            print('---------------')
-            lng, lat = getSmallRect(bigrect, WindowSize, index)
-            requestMBikeApi(lat=lat, lng=lng, index=index, file=file, logfile=logfile, userId=userId)
-        time.sleep(1200)
-    sys.stderr.close()
+    day = time.strftime('%Y-%m-%d')
+    timp = time.strftime('%H:%M')
+    logfile = open("./log/" + FileKey + "-" + str(count) + '_' + today + ".log", 'a+', encoding='utf-8')
+    file = open("./result/" + FileKey + "-" + str(count) + '_' + today + ".txt", 'a+', encoding='utf-8')
+    for index in range(int(WindowSize['xNum'] * WindowSize['yNum'])):
+        # print('---------------')
+        # print(index)
+        # print('---------------')
+        lng, lat = getSmallRect(bigrect, WindowSize, index)
+        requestMBikeApi(lat=lat, lng=lng, index=index, file=file, logfile=logfile, userId=userId, day=day, timp=timp)
+    # time.sleep(1200)
 
+
+def test(i):
+   print("test_1: " + str(i))
+   r = yield from asyncio.sleep(1)
+   print("test_2: " + str(i))
 
 def main():
     # for index in range(int(WindowSize['xNum'] * WindowSize['yNum'])):
